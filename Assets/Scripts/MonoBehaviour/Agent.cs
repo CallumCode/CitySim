@@ -19,6 +19,12 @@ public class Agent : MonoBehaviour
 	float m_fThirstRate;
 
 
+	[SerializeField]
+	[Range(0, 10)]
+	float m_fSpeed;
+
+	Inventory m_Inventory;
+
 
 	//////////// Accessors ////////////////////////////////
 	public Need GetThirst()
@@ -31,6 +37,12 @@ public class Agent : MonoBehaviour
 		return m_hunger;
 	}
 
+	public Inventory GetInventory()
+	{
+		return m_Inventory;
+	}
+
+
 	// Use this for initialization
 	void Start()
 	{
@@ -38,6 +50,8 @@ public class Agent : MonoBehaviour
 		m_thirst = new Need(40, 5, 80, 50, 20);
 
 		m_BaseGoal = new GoalSurvive(this);
+		m_Inventory = new Inventory();
+		m_Inventory.AddItem(new Resource(Resource.EType.food, 10));
 	}
 
 	// Update is called once per frame
@@ -58,6 +72,23 @@ public class Agent : MonoBehaviour
 	{
 		DebugText.Print("Hunger : " + GetHunger().Get());
 		DebugText.Print("Thirst : " + GetThirst().Get());
+	}
+
+
+	public void MoveTowardsTarget(Transform target)
+	{
+		transform.LookAt(target);
+		transform.Translate(transform.forward * Time.deltaTime * m_fSpeed , Space.World);
+	}
+
+	public bool IsNearTarget(Transform target, float range)
+	{
+		float dist = Vector3.Distance(target.position, transform.position);
+		if(dist < range)
+		{
+			return true;
+		}
+		return false;
 	}
 
 }
